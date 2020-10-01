@@ -75,6 +75,7 @@ jobs:
           ls -lh /__w/_temp/
           ls -lh /__w/_temp/Library
           echo "R_LIBS_USER=/__w/_temp/Library" >> $GITHUB_ENV
+          echo "R_LIBS_USER=/__w/_temp/Library" > ~/.Renviron
 
       ## Most of these steps are the same as the ones in
       ## https://github.com/r-lib/actions/blob/master/examples/check-standard.yaml
@@ -113,7 +114,7 @@ jobs:
         if: "!contains(github.event.head_commit.message, '/nocache') && runner.os == 'Linux' "
         uses: actions/cache@v1
         with:
-          path: /Users/runner/work/_temp/Library
+          path: /home/runner/work/_temp/Library
           key: ${{ env.cache-version }}-${{ runner.os }}-biocbranch-devel-r-4-0-2-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocbranch-devel-r-4-0-2-
 
