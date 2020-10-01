@@ -79,7 +79,7 @@ jobs:
           Rscript -e ".libPaths()"
           echo "R_LIBS_USER=/__w/_temp/Library" > ~/.Renviron
           Rscript -e ".libPaths()"
-          echo ".libPaths()[c(3, 1, 2)]" > ~/.Rprofile
+          echo ".libPaths(.libPaths()[c(3, 1, 2)])" > ~/.Rprofile
           Rscript -e ".libPaths()"
           Rscript -e ".libPaths()"
 
