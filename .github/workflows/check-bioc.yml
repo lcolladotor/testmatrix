@@ -72,7 +72,7 @@ jobs:
       ## and allow it to be used by the R packages cache step further below.
       ## On macOS and Windows, R_LIBS_USER is setup by r-lib/actions/setup-r@master
       - name: Set R_LIBS_USER on Linux
-        if: runner.os == "Linux"
+        if: runner.os == 'Linux'
         run: echo "{R_LIBS_USER}=/home/runner/work/_temp/Library" >> $GITHUB_ENV
 
       ## Most of these steps are the same as the ones in
