@@ -52,7 +52,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: ubuntu-latest, r: '4.0', cont: "bioconductor/bioconductor_docker:devel", contopts "-v /home/runner/work/_temp/Library:/usr/local/lib/R/host-site-library", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
+          - { os: ubuntu-latest, r: '4.0', cont: "bioconductor/bioconductor_docker:devel", contopts: "-v /home/runner/work/_temp/Library:/usr/local/lib/R/host-site-library", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
           - { os: macOS-latest, r: '4.0'}
           - { os: windows-latest, r: '4.0'}
     env:
