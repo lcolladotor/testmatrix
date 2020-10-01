@@ -175,6 +175,25 @@ jobs:
           BiocManager::install("BiocCheck", lib = Sys.getenv("R_LIBS_USER"))
         shell: Rscript {0}
 
+      - name: Install BiocGenerics
+        if:  env.has_RUnit == 'true'
+        run: |
+          ## Install BiocGenerics
+          BiocManager::install("BiocGenerics", lib = Sys.getenv("R_LIBS_USER"))
+        shell: Rscript {0}
+
+      - name: Install covr
+        if: github.ref == 'refs/heads/master' && env.run_covr == 'true' && runner.os == 'Linux'
+        run: |
+          remotes::install_cran("covr", lib = Sys.getenv("R_LIBS_USER"))
+        shell: Rscript {0}
+
+      - name: Install pkgdown
+        if: github.ref == 'refs/heads/master' && env.run_pkgdown == 'true' && runner.os == 'Linux'
+        run: |
+          remotes::install_github("r-lib/pkgdown", lib = Sys.getenv("R_LIBS_USER"))
+        shell: Rscript {0}
+
       - name: Session info
         run: |
           options(width = 100)
@@ -202,8 +221,6 @@ jobs:
       - name: Run RUnit tests
         if:  env.has_RUnit == 'true'
         run: |
-          ## Install BiocGenerics
-          BiocManager::install("BiocGenerics", lib = Sys.getenv("R_LIBS_USER"))
           BiocGenerics:::testPackage()
         shell: Rscript {0}
 
@@ -217,22 +234,10 @@ jobs:
           )
         shell: Rscript {0}
 
-      - name: Install covr
-        if: github.ref == 'refs/heads/master' && env.run_covr == 'true' && runner.os == 'Linux'
-        run: |
-          remotes::install_cran("covr", lib = Sys.getenv("R_LIBS_USER"))
-        shell: Rscript {0}
-
       - name: Test coverage
         if: github.ref == 'refs/heads/master' && env.run_covr == 'true' && runner.os == 'Linux'
         run: |
           covr::codecov()
-        shell: Rscript {0}
-
-      - name: Install pkgdown
-        if: github.ref == 'refs/heads/master' && env.run_pkgdown == 'true' && runner.os == 'Linux'
-        run: |
-          remotes::install_github("r-lib/pkgdown", lib = Sys.getenv("R_LIBS_USER"))
         shell: Rscript {0}
 
       - name: Install package
