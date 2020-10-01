@@ -44,8 +44,7 @@ jobs:
   build-check:
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
-    container:
-      image: ${{ matrix.config.cont }}
+    container: ${{ matrix.config.cont }}
       volumes:
         - /home/runner/work/_temp/Library:/usr/local/lib/R/host-site-library
     ## Environment variables unique to this job.
