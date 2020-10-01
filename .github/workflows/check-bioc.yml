@@ -45,7 +45,7 @@ jobs:
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
     container:
-      - ${{ matrix.config.cont }}
+    - "${{ matrix.config.cont }}"
     ## Environment variables unique to this job.
 
     strategy:
