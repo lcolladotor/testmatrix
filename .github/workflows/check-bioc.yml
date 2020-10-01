@@ -70,7 +70,7 @@ jobs:
       ## On macOS and Windows, R_LIBS_USER is setup by r-lib/actions/setup-r@master
       - name: Set R_LIBS_USER on Linux
         if: runner.os == 'Linux'
-        run: echo "R_LIBS_USER=/__w" >> $GITHUB_ENV
+        run: echo "R_LIBS_USER=/__w/_temp/Library" >> $GITHUB_ENV
 
       ## Most of these steps are the same as the ones in
       ## https://github.com/r-lib/actions/blob/master/examples/check-standard.yaml
@@ -92,7 +92,7 @@ jobs:
 
       - name: Query dependencies
         run: |
-          install.packages('remotes')
+          install.packages('remotes', lib = Sys.getenv("R_LIBS_USER"))
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
 
@@ -108,7 +108,7 @@ jobs:
         if: "!contains(github.event.head_commit.message, '/nocache') && runner.os == 'Linux' "
         uses: actions/cache@v1
         with:
-          path: /home/runner/work
+          path: /Users/runner/work/_temp/Library
           key: ${{ env.cache-version }}-${{ runner.os }}-biocbranch-devel-r-4-0-2-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocbranch-devel-r-4-0-2-
 
@@ -117,7 +117,7 @@ jobs:
         env:
           RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
-          Rscript -e "remotes::install_github('r-hub/sysreqs')"
+          Rscript -e "remotes::install_github('r-hub/sysreqs', lib = Sys.getenv("R_LIBS_USER"))"
           sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
           sudo -s eval "$sysreqs"
 
@@ -141,12 +141,12 @@ jobs:
       - name: Install BiocManager
         run: |
           message(paste('****', Sys.time(), 'installing BiocManager ****'))
-          remotes::install_cran("BiocManager")
+          remotes::install_cran("BiocManager", lib = Sys.getenv("R_LIBS_USER"))
         shell: Rscript {0}
 
       - name: Set BiocVersion
         run: |
-          BiocManager::install(version = "devel", ask = FALSE)
+          BiocManager::install(version = "devel", ask = FALSE, lib = Sys.getenv("R_LIBS_USER"))
         shell: Rscript {0}
 
       - name: Install dependencies
@@ -160,16 +160,16 @@ jobs:
 
           ## Pass #1 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
-          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
+          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE, lib = Sys.getenv("R_LIBS_USER"))
 
           ## Pass #2 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
-          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
+          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE, lib = Sys.getenv("R_LIBS_USER"))
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
-          remotes::install_cran("rcmdcheck")
-          BiocManager::install("BiocCheck")
+          remotes::install_cran("rcmdcheck", lib = Sys.getenv("R_LIBS_USER"))
+          BiocManager::install("BiocCheck", lib = Sys.getenv("R_LIBS_USER"))
         shell: Rscript {0}
 
       - name: Session info
@@ -200,7 +200,7 @@ jobs:
         if:  env.has_RUnit == 'true'
         run: |
           ## Install BiocGenerics
-          BiocManager::install("BiocGenerics")
+          BiocManager::install("BiocGenerics", lib = Sys.getenv("R_LIBS_USER"))
           BiocGenerics:::testPackage()
         shell: Rscript {0}
 
@@ -217,7 +217,7 @@ jobs:
       - name: Install covr
         if: github.ref == 'refs/heads/master' && env.run_covr == 'true' && runner.os == 'Linux'
         run: |
-          remotes::install_cran("covr")
+          remotes::install_cran("covr", lib = Sys.getenv("R_LIBS_USER"))
         shell: Rscript {0}
 
       - name: Test coverage
@@ -229,7 +229,7 @@ jobs:
       - name: Install pkgdown
         if: github.ref == 'refs/heads/master' && env.run_pkgdown == 'true' && runner.os == 'Linux'
         run: |
-          remotes::install_github("r-lib/pkgdown")
+          remotes::install_github("r-lib/pkgdown", lib = Sys.getenv("R_LIBS_USER"))
         shell: Rscript {0}
 
       - name: Install package
