@@ -45,7 +45,7 @@ jobs:
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
     container:
-      - { image: ${{ matrix.config.cont }}, volumes: ${{ matrix.config.volumes }} }
+      - ${{ matrix.config.cont }}
     ## Environment variables unique to this job.
 
     strategy:
