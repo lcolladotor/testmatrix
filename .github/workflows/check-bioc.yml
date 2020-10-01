@@ -72,6 +72,8 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           mkdir /__w/_temp/Library
+          ls -lh /__w/_temp/
+          ls -lh /__w/_temp/Library
           echo "R_LIBS_USER=/__w/_temp/Library" >> $GITHUB_ENV
 
       ## Most of these steps are the same as the ones in
@@ -94,8 +96,9 @@ jobs:
 
       - name: Query dependencies
         run: |
-          install.packages('remotes', lib = Sys.getenv("R_LIBS_USER"))
+          install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          dir("/__w/_temp/Library")
         shell: Rscript {0}
 
       - name: Cache R packages
@@ -119,7 +122,7 @@ jobs:
         env:
           RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
-          Rscript -e "remotes::install_github('r-hub/sysreqs', lib = Sys.getenv("R_LIBS_USER"))"
+          Rscript -e "remotes::install_github('r-hub/sysreqs')"
           sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
           sudo -s eval "$sysreqs"
 
@@ -143,12 +146,12 @@ jobs:
       - name: Install BiocManager
         run: |
           message(paste('****', Sys.time(), 'installing BiocManager ****'))
-          remotes::install_cran("BiocManager", lib = Sys.getenv("R_LIBS_USER"))
+          remotes::install_cran("BiocManager")
         shell: Rscript {0}
 
       - name: Set BiocVersion
         run: |
-          BiocManager::install(version = "devel", ask = FALSE, lib = Sys.getenv("R_LIBS_USER"))
+          BiocManager::install(version = "devel", ask = FALSE)
         shell: Rscript {0}
 
       - name: Install dependencies
@@ -162,16 +165,16 @@ jobs:
 
           ## Pass #1 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
-          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE, lib = Sys.getenv("R_LIBS_USER"))
+          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
 
           ## Pass #2 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
-          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE, lib = Sys.getenv("R_LIBS_USER"))
+          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
-          remotes::install_cran("rcmdcheck", lib = Sys.getenv("R_LIBS_USER"))
-          BiocManager::install("BiocCheck", lib = Sys.getenv("R_LIBS_USER"))
+          remotes::install_cran("rcmdcheck")
+          BiocManager::install("BiocCheck")
         shell: Rscript {0}
 
       - name: Session info
@@ -202,7 +205,7 @@ jobs:
         if:  env.has_RUnit == 'true'
         run: |
           ## Install BiocGenerics
-          BiocManager::install("BiocGenerics", lib = Sys.getenv("R_LIBS_USER"))
+          BiocManager::install("BiocGenerics")
           BiocGenerics:::testPackage()
         shell: Rscript {0}
 
@@ -219,7 +222,7 @@ jobs:
       - name: Install covr
         if: github.ref == 'refs/heads/master' && env.run_covr == 'true' && runner.os == 'Linux'
         run: |
-          remotes::install_cran("covr", lib = Sys.getenv("R_LIBS_USER"))
+          remotes::install_cran("covr")
         shell: Rscript {0}
 
       - name: Test coverage
@@ -231,7 +234,7 @@ jobs:
       - name: Install pkgdown
         if: github.ref == 'refs/heads/master' && env.run_pkgdown == 'true' && runner.os == 'Linux'
         run: |
-          remotes::install_github("r-lib/pkgdown", lib = Sys.getenv("R_LIBS_USER"))
+          remotes::install_github("r-lib/pkgdown")
         shell: Rscript {0}
 
       - name: Install package
