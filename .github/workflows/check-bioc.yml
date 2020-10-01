@@ -45,16 +45,16 @@ jobs:
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
     container: ${{ matrix.config.cont }}
-      options: ${{ matrix.config.contopts }}
+      ${{ matrix.config.contopts }}
     ## Environment variables unique to this job.
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - { os: ubuntu-latest, r: '4.0', cont: "bioconductor/bioconductor_docker:devel", contopts: "-v /home/runner/work/_temp/Library:/usr/local/lib/R/host-site-library", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-          - { os: macOS-latest, r: '4.0'}
-          - { os: windows-latest, r: '4.0'}
+          - { os: ubuntu-latest, r: '4.0', cont: "bioconductor/bioconductor_docker:devel", contopts: "volumes: /home/runner/work/_temp/Library:/usr/local/lib/R/host-site-library", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
+          - { os: macOS-latest, r: '4.0', contopts: "#"}
+          - { os: windows-latest, r: '4.0', contopts: "#"}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
